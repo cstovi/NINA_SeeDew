@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 using NINA.Core.Model;
 using NINA.Sequencer.SequenceItem;
 
-namespace NINA.Plugin.DewSee.Sequencer {
+namespace NINA.Plugin.SeeDew.Sequencer {
 
     [Export(typeof(ISequenceItem))]
     [ExportMetadata("Name", "Start Dew Control")]
-    [ExportMetadata("Description", "Starts the DewSee automatic dew heater control")]
-    [ExportMetadata("Icon", "DewSee_Icon")]
-    [ExportMetadata("Category", "DewSee")]
+    [ExportMetadata("Description", "Starts the SeeDew automatic dew heater control")]
+    [ExportMetadata("Icon", "SeeDew_Icon")]
+    [ExportMetadata("Category", "SeeDew")]
     public class StartDewControlInstruction : SequenceItem {
 
-        private readonly DewSeePlugin _plugin;
+        private readonly SeeDewPlugin _plugin;
 
         [ImportingConstructor]
-        public StartDewControlInstruction(DewSeePlugin plugin) {
+        public StartDewControlInstruction(SeeDewPlugin plugin) {
             _plugin = plugin;
             Name = "Start Dew Control";
         }

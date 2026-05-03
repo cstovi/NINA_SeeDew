@@ -7,14 +7,14 @@ using NINA.Core.Utility;
 using NINA.Equipment.Interfaces.Mediator;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
-using NINA.Plugin.DewSee.Services;
+using NINA.Plugin.SeeDew.Services;
 using NINA.Equipment.Interfaces;
 
-namespace NINA.Plugin.DewSee {
+namespace NINA.Plugin.SeeDew {
 
     [Export(typeof(IPluginManifest))]
     [Export]
-    public class DewSeePlugin : PluginBase, IPluginManifest, INotifyPropertyChanged {
+    public class SeeDewPlugin : PluginBase, IPluginManifest, INotifyPropertyChanged {
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
@@ -23,14 +23,14 @@ namespace NINA.Plugin.DewSee {
         private readonly ISwitchMediator _switchMediator;
 
         public DewControlService DewControlService { get; }
-        public DewSeeSettings Settings { get; }
+        public SeeDewSettings Settings { get; }
 
         [ImportingConstructor]
-        public DewSeePlugin(IWeatherDataMediator weatherMediator, ISwitchMediator switchMediator) {
+        public SeeDewPlugin(IWeatherDataMediator weatherMediator, ISwitchMediator switchMediator) {
             _weatherMediator = weatherMediator;
             _switchMediator = switchMediator;
 
-            Settings = DewSeeSettings.Load();
+            Settings = SeeDewSettings.Load();
             DewControlService = new DewControlService(_weatherMediator, _switchMediator, Settings);
 
             OnBelowThreshold = Settings.OnBelowThreshold;

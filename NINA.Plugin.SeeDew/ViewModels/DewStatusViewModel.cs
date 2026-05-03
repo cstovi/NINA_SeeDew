@@ -7,16 +7,16 @@ using NINA.Core.Utility;
 using NINA.Equipment.Interfaces.ViewModel;
 using NINA.Profile.Interfaces;
 using NINA.WPF.Base.ViewModel;
-using NINA.Plugin.DewSee.Services;
+using NINA.Plugin.SeeDew.Services;
 
-namespace NINA.Plugin.DewSee.ViewModels {
+namespace NINA.Plugin.SeeDew.ViewModels {
 
     [Export(typeof(IDockableVM))]
     public class DewStatusViewModel : DockableVM {
         private readonly DewControlService _service;
 
         [ImportingConstructor]
-        public DewStatusViewModel(IProfileService profileService, DewSeePlugin plugin) : base(profileService) {
+        public DewStatusViewModel(IProfileService profileService, SeeDewPlugin plugin) : base(profileService) {
             _service = plugin.DewControlService;
 
             Title = "Dew Control";

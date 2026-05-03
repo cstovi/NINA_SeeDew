@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NINA.Equipment.Interfaces.Mediator;
 
-namespace NINA.Plugin.DewSee.Services {
+namespace NINA.Plugin.SeeDew.Services {
 
     public enum DewServiceStatus { Stopped, Running, Error }
 
@@ -30,7 +30,7 @@ namespace NINA.Plugin.DewSee.Services {
     public class DewControlService {
         private readonly IWeatherDataMediator _weatherMediator;
         private readonly ISwitchMediator _switchMediator;
-        private readonly DewSeeSettings _settings;
+        private readonly SeeDewSettings _settings;
 
         private CancellationTokenSource? _cts;
         private Task? _pollingTask;
@@ -47,7 +47,7 @@ namespace NINA.Plugin.DewSee.Services {
         public string? LastError { get; private set; }
         public bool IsRunning => Status == DewServiceStatus.Running;
 
-        public DewControlService(IWeatherDataMediator weatherMediator, ISwitchMediator switchMediator, DewSeeSettings settings) {
+        public DewControlService(IWeatherDataMediator weatherMediator, ISwitchMediator switchMediator, SeeDewSettings settings) {
             _weatherMediator = weatherMediator;
             _switchMediator = switchMediator;
             _settings = settings;
@@ -90,7 +90,7 @@ namespace NINA.Plugin.DewSee.Services {
             Log($"Running — on<{_settings.OnBelowThreshold:F1}°C, off>{_settings.OffAboveThreshold:F1}°C, every {_settings.PollIntervalMinutes}m");
 
             var lines = new List<string> {
-                $"🔭 DewSee started — every {_settings.PollIntervalMinutes}m | heater on <{_settings.OnBelowThreshold:F1}°C margin, off >{_settings.OffAboveThreshold:F1}°C margin",
+                $"🔭 SeeDew started — every {_settings.PollIntervalMinutes}m | heater on <{_settings.OnBelowThreshold:F1}°C margin, off >{_settings.OffAboveThreshold:F1}°C margin",
                 switchStatusLine
             };
             if (!_weatherAvailable) lines.Add("⚠️ No weather source connected in NINA — enable a weather plugin (e.g. SkyAlert, OpenWeatherMap, or an ASCOM weather station)");
@@ -117,7 +117,7 @@ namespace NINA.Plugin.DewSee.Services {
 
             SetStatus(DewServiceStatus.Stopped);
             Log("Dew control stopped");
-            await NotifyDiscordAsync("🛑 DewSee: Seestar dew control stopped (stop requested)");
+            await NotifyDiscordAsync("🛑 SeeDew: Seestar dew control stopped (stop requested)");
         }
 
         private async Task RunLoopAsync(CancellationToken token) {
@@ -148,10 +148,10 @@ namespace NINA.Plugin.DewSee.Services {
                 _weatherAvailable = weatherNow;
                 if (weatherNow) {
                     Log("Weather source connected");
-                    await NotifyDiscordAsync("✅ DewSee: Weather source connected — temperature readings resumed");
+                    await NotifyDiscordAsync("✅ SeeDew: Weather source connected — temperature readings resumed");
                 } else {
                     Log("Weather source disconnected");
-                    await NotifyDiscordAsync("⚠️ DewSee: Weather source offline — cannot read temperature/dew point. Enable a weather plugin in NINA (e.g. SkyAlert, OpenWeatherMap, or an ASCOM weather station).");
+                    await NotifyDiscordAsync("⚠️ SeeDew: Weather source offline — cannot read temperature/dew point. Enable a weather plugin in NINA (e.g. SkyAlert, OpenWeatherMap, or an ASCOM weather station).");
                 }
             }
 
@@ -167,10 +167,10 @@ namespace NINA.Plugin.DewSee.Services {
 
             if (_switchConnected == null || switchNow != _switchConnected.Value) {
                 if (!switchNow) {
-                    await NotifyDiscordAsync("⚠️ DewSee: Seestar switch not connected in NINA — connect it in the Switch panel");
+                    await NotifyDiscordAsync("⚠️ SeeDew: Seestar switch not connected in NINA — connect it in the Switch panel");
                 } else if (_switchConnected == false) {
                     Log("Seestar switch reconnected");
-                    await NotifyDiscordAsync("✅ DewSee: Seestar switch reconnected");
+                    await NotifyDiscordAsync("✅ SeeDew: Seestar switch reconnected");
                 }
                 _switchConnected = switchNow;
             }
@@ -203,7 +203,7 @@ namespace NINA.Plugin.DewSee.Services {
                 string action = newHeater ? "turned ON" : "turned OFF";
                 string emoji  = newHeater ? "🌡️" : "✅";
                 Log($"Heater {action} — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C");
-                await NotifyDiscordAsync($"{emoji} DewSee: Seestar dew heater {action} — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C");
+                await NotifyDiscordAsync($"{emoji} SeeDew: Seestar dew heater {action} — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C");
             } else {
                 Log($"No change — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C  Heater:{(currentHeater ? "ON" : "OFF")}");
             }
@@ -213,7 +213,7 @@ namespace NINA.Plugin.DewSee.Services {
 
         private static string LogFilePath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "NINA", "DewSee", "dewsee.log");
+            "NINA", "SeeDew", "seedew.log");
 
         private void Log(string message) {
             var entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}";

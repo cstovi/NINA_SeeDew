@@ -9,23 +9,23 @@ A NINA (Nighttime Imaging 'N' Astronomy) plugin that automatically controls the 
 ## Build
 
 ```powershell
-cd NINA.Plugin.DewSee
+cd NINA.Plugin.SeeDew
 dotnet build                    # Debug
 dotnet build -c Release         # Release
 ```
 
-Output: `bin\Debug\net8.0-windows\NINA.Plugin.DewSee.dll`
+Output: `bin\Debug\net8.0-windows\NINA.Plugin.SeeDew.dll`
 
 ## Install for testing
 
-Copy only `NINA.Plugin.DewSee.dll` into `%LOCALAPPDATA%\NINA\Plugins\3.0.0\DewSee\` and restart NINA. NINA loads all plugins from the `3.0.0` subfolder regardless of the running NINA version — do not use the `3.2.0.9001` folder, NINA does not scan it for plugins. No other files from the build output are needed — NINA ships its own dependencies.
+Copy only `NINA.Plugin.SeeDew.dll` into `%LOCALAPPDATA%\NINA\Plugins\3.0.0\SeeDew\` and restart NINA. NINA loads all plugins from the `3.0.0` subfolder regardless of the running NINA version — do not use the `3.2.0.9001` folder, NINA does not scan it for plugins. No other files from the build output are needed — NINA ships its own dependencies.
 
 ## Project Structure
 
 ```
-NINA.Plugin.DewSee/
-  DewSeePlugin.cs               ← IPluginManifest + INotifyPropertyChanged; owns DewControlService; options UI bindings
-  DewSeeSettings.cs             ← JSON settings persisted to %LOCALAPPDATA%\NINA\Plugins\DewSee\settings.json
+NINA.Plugin.SeeDew/
+  SeeDewPlugin.cs               ← IPluginManifest + INotifyPropertyChanged; owns DewControlService; options UI bindings
+  SeeDewSettings.cs             ← JSON settings persisted to %LOCALAPPDATA%\NINA\Plugins\SeeDew\settings.json
   Services/
     DewControlService.cs        ← polling loop, hysteresis logic, events (CycleCompleted, LogEntryAdded, StatusChanged)
     SeestarAlpacaClient.cs      ← HttpClient wrapper for Alpaca switch endpoints
@@ -33,17 +33,17 @@ NINA.Plugin.DewSee/
     DewStatusViewModel.cs       ← [Export(typeof(IDockableVM))]; subscribes to service events; Start/Stop commands
   Views/
     DewStatusView.xaml          ← dockable panel: readings grid, heater indicator, log list
-  Resources.xaml                ← MEF ResourceDictionary: DewSee_Options template + dockable data template
+  Resources.xaml                ← MEF ResourceDictionary: SeeDew_Options template + dockable data template
   Properties/AssemblyInfo.cs    ← plugin GUID (never change), title, version, tags
 ```
 
 ## Key Architecture Points
 
-**MEF wiring:** NINA uses MEF for DI. `DewSeePlugin` is exported as both `[Export(typeof(IPluginManifest))]` and `[Export]` so `DewStatusViewModel` can import it by type. `DewStatusViewModel` is exported as `[Export(typeof(IDockableVM))]` and receives `(IProfileService, DewSeePlugin)` via `[ImportingConstructor]`.
+**MEF wiring:** NINA uses MEF for DI. `SeeDewPlugin` is exported as both `[Export(typeof(IPluginManifest))]` and `[Export]` so `DewStatusViewModel` can import it by type. `DewStatusViewModel` is exported as `[Export(typeof(IDockableVM))]` and receives `(IProfileService, SeeDewPlugin)` via `[ImportingConstructor]`.
 
 **XAML template keys** must match exactly:
-- Options UI: `DewSee_Options` (matches AssemblyTitle)
-- Dockable panel: `NINA.Plugin.DewSee.ViewModels.DewStatusViewModel_Dockable` (fully qualified VM type + `_Dockable`)
+- Options UI: `SeeDew_Options` (matches AssemblyTitle)
+- Dockable panel: `NINA.Plugin.SeeDew.ViewModels.DewStatusViewModel_Dockable` (fully qualified VM type + `_Dockable`)
 
 **Control logic** (hysteresis):
 ```

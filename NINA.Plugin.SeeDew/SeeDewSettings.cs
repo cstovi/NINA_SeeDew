@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace NINA.Plugin.DewSee {
+namespace NINA.Plugin.SeeDew {
 
-    public class DewSeeSettings {
+    public class SeeDewSettings {
         public double OnBelowThreshold { get; set; } = 3.5;
         public double OffAboveThreshold { get; set; } = 5.0;
         public int PollIntervalMinutes { get; set; } = 1;
@@ -12,14 +12,14 @@ namespace NINA.Plugin.DewSee {
 
         private static string SettingsPath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "NINA", "Plugins", "DewSee", "settings.json");
+            "NINA", "Plugins", "SeeDew", "settings.json");
 
-        public static DewSeeSettings Load() {
+        public static SeeDewSettings Load() {
             try {
                 if (File.Exists(SettingsPath))
-                    return JsonConvert.DeserializeObject<DewSeeSettings>(File.ReadAllText(SettingsPath)) ?? new DewSeeSettings();
+                    return JsonConvert.DeserializeObject<SeeDewSettings>(File.ReadAllText(SettingsPath)) ?? new SeeDewSettings();
             } catch { }
-            return new DewSeeSettings();
+            return new SeeDewSettings();
         }
 
         public void Save() {

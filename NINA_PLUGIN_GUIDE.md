@@ -34,7 +34,7 @@ Hard-won lessons from building a NINA 3.x plugin on net8.0-windows. Drop this fi
 Keep in `Properties/AssemblyInfo.cs`. The GUID is the stable plugin identity — **never change it after first publish**:
 
 ```csharp
-[assembly: AssemblyTitle("MyPlugin")]           // must match DewSee_Options key (see XAML keys below)
+[assembly: AssemblyTitle("MyPlugin")]           // must match SeeDew_Options key (see XAML keys below)
 [assembly: AssemblyDescription("...")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: Guid("YOUR-GUID-HERE")]              // generate once, never regenerate
@@ -166,13 +166,13 @@ NINA merges all `[Export(typeof(ResourceDictionary))]` exports into the applicat
 
 | Purpose | Key format | Example |
 |---|---|---|
-| Options UI | `{AssemblyTitle}_Options` | `DewSee_Options` |
+| Options UI | `{AssemblyTitle}_Options` | `SeeDew_Options` |
 | Dockable panel | `{FullyQualifiedVMType}_Dockable` | `MyNamespace.ViewModels.MyStatusViewModel_Dockable` |
 | Sequencer items | none — use implicit `DataType` only | see below |
 
 ```xml
 <!-- Options UI — key must exactly match AssemblyTitle + "_Options" -->
-<DataTemplate x:Key="DewSee_Options" DataType="{x:Type local:MyPlugin}">
+<DataTemplate x:Key="SeeDew_Options" DataType="{x:Type local:MyPlugin}">
     <StackPanel> ... </StackPanel>
 </DataTemplate>
 
@@ -303,7 +303,7 @@ public class MyPluginSettings {
 
 ## Options UI
 
-The options DataTemplate binds to the plugin class (`DewSeePlugin` / `MyPlugin`). Expose bindable properties with `INotifyPropertyChanged` and a save command:
+The options DataTemplate binds to the plugin class (`SeeDewPlugin` / `MyPlugin`). Expose bindable properties with `INotifyPropertyChanged` and a save command:
 
 ```csharp
 public class MyPlugin : PluginBase, IPluginManifest, INotifyPropertyChanged {

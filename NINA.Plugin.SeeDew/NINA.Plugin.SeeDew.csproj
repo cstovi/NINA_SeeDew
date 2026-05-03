@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>NINA.Plugin.DewSee</RootNamespace>
-    <AssemblyName>NINA.Plugin.DewSee</AssemblyName>
+    <RootNamespace>NINA.Plugin.SeeDew</RootNamespace>
+    <AssemblyName>NINA.Plugin.SeeDew</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
