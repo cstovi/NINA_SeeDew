@@ -8,7 +8,7 @@ using NINA.Sequencer.SequenceItem;
 namespace NINA.Plugin.SeeDew.Sequencer {
 
     [Export(typeof(ISequenceItem))]
-    [ExportMetadata("Name", "Stop Dew Control")]
+    [ExportMetadata("Name", "Stop SeeDew Control")]
     [ExportMetadata("Description", "Stops the SeeDew automatic dew heater control")]
     [ExportMetadata("Icon", "SeeDew_Icon")]
     [ExportMetadata("Category", "SeeDew")]
@@ -19,7 +19,7 @@ namespace NINA.Plugin.SeeDew.Sequencer {
         [ImportingConstructor]
         public StopDewControlInstruction(SeeDewPlugin plugin) {
             _plugin = plugin;
-            Name = "Stop Dew Control";
+            Name = "Stop SeeDew Control";
             if (System.Windows.Application.Current?.Resources["SeeDew_Icon"] is System.Windows.Media.GeometryGroup icon)
                 Icon = icon;
         }
