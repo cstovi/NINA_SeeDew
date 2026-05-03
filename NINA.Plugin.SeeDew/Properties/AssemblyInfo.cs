@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyMetadata("License", "MIT")]
 [assembly: AssemblyMetadata("LicenseURL", "https://opensource.org/licenses/MIT")]
-[assembly: AssemblyMetadata("Repository", "https://github.com/cstovi/SeeDew")]
+[assembly: AssemblyMetadata("Repository", "https://github.com/cstovi/NINA_SeeDew")]
 [assembly: AssemblyMetadata("Tags", "Seestar,dew,heater,weather,automation")]
 [assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.1001")]
 [assembly: AssemblyMetadata("ShortDescription", "Automatically turns the Seestar dew heater on and off based on temperature/dew point margin.")]
@@ -29,4 +29,4 @@ Features:
 
 Thanks to @Astrowook for ideas, skills and laughs")]
 [assembly: AssemblyMetadata("FeaturedImageURL", "https://i.ibb.co/jkMX7y6m/See-Dew.png")]
-[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/cstovi/SeeDew/releases")]
+[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/cstovi/NINA_SeeDew/releases")]
