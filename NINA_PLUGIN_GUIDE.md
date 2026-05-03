@@ -34,7 +34,7 @@ Hard-won lessons from building a NINA 3.x plugin on net8.0-windows. Drop this fi
 Keep in `Properties/AssemblyInfo.cs`. The GUID is the stable plugin identity — **never change it after first publish**:
 
 ```csharp
-[assembly: AssemblyTitle("MyPlugin")]           // must match SeeDew_Options key (see XAML keys below)
+[assembly: AssemblyTitle("MyPlugin")]           // must match MyPlugin_Options key (see XAML keys below)
 [assembly: AssemblyDescription("...")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: Guid("YOUR-GUID-HERE")]              // generate once, never regenerate
@@ -166,13 +166,13 @@ NINA merges all `[Export(typeof(ResourceDictionary))]` exports into the applicat
 
 | Purpose | Key format | Example |
 |---|---|---|
-| Options UI | `{AssemblyTitle}_Options` | `SeeDew_Options` |
+| Options UI | `{AssemblyTitle}_Options` | `MyPlugin_Options` |
 | Dockable panel | `{FullyQualifiedVMType}_Dockable` | `MyNamespace.ViewModels.MyStatusViewModel_Dockable` |
 | Sequencer items | none — use implicit `DataType` only | see below |
 
 ```xml
 <!-- Options UI — key must exactly match AssemblyTitle + "_Options" -->
-<DataTemplate x:Key="SeeDew_Options" DataType="{x:Type local:MyPlugin}">
+<DataTemplate x:Key="MyPlugin_Options" DataType="{x:Type local:MyPlugin}">
     <StackPanel> ... </StackPanel>
 </DataTemplate>
 
@@ -301,9 +301,28 @@ public class MyPluginSettings {
 
 ---
 
+## Discord Webhook Notifications
+
+### JSON escaping — use JsonConvert.ToString
+
+When building a Discord webhook payload, escape the message string with `Newtonsoft.Json.JsonConvert.ToString()` rather than manually replacing quotes/backslashes:
+
+```csharp
+using Newtonsoft.Json;
+
+string escaped = JsonConvert.ToString(message);   // returns the value WITH surrounding quotes
+string payload = $"{{\"content\":{escaped}}}";
+```
+
+`JsonConvert.ToString(string)` returns the value already surrounded by `"` characters (it serialises a single string value), so do not add extra quotes around it in the payload.
+
+Manual `Replace` approaches miss edge cases like backslashes, newlines, and Unicode escapes.
+
+---
+
 ## Options UI
 
-The options DataTemplate binds to the plugin class (`SeeDewPlugin` / `MyPlugin`). Expose bindable properties with `INotifyPropertyChanged` and a save command:
+The options DataTemplate binds to the plugin class (`MyPlugin`). Expose bindable properties with `INotifyPropertyChanged` and a save command:
 
 ```csharp
 public class MyPlugin : PluginBase, IPluginManifest, INotifyPropertyChanged {
@@ -330,62 +349,103 @@ The "Save Settings" button pattern (rather than auto-save on every keystroke) av
 
 ---
 
-## Reacting to Sequence Start / Stop
+## Injectable Mediators
 
-### Why this matters
+### Which mediators are safe to inject into the plugin manifest
 
-A background service started by a sequencer instruction keeps running after the sequence ends unless you explicitly stop it. Hook `ISequenceMediator` to auto-stop when the sequence finishes or is aborted.
+**Safe (NINA.Equipment) — MEF injects these correctly:**
 
-### Import the mediator
+| Mediator | What it gives you |
+|---|---|
+| `IWeatherDataMediator` | Temperature, dew point, humidity, etc. |
+| `ISwitchMediator` | Read/write Alpaca switch devices |
+| `ICameraMediator` | Camera info and control |
+| `ITelescopeMediator` | Mount info and control |
+| other equipment mediators | Same pattern |
 
-Add `ISequenceMediator` to the plugin manifest constructor:
+**Not safe (NINA.Sequencer) — MEF passes `null` for these at plugin load time:**
 
-```csharp
-using NINA.Sequencer.Interfaces.Mediator;
+| Mediator | Problem |
+|---|---|
+| `ISequenceMediator` | MEF cannot resolve it during plugin manifest construction → injected as `null` → NRE → plugin fails to load |
 
-[ImportingConstructor]
-public MyPlugin(IWeatherDataMediator weatherMediator, ISequenceMediator sequenceMediator) {
-    _sequenceMediator = sequenceMediator;
-    _sequenceMediator.SequenceStarting += OnSequenceStarting;
-    _sequenceMediator.SequenceFinished += OnSequenceFinished;
-    ...
-}
-```
+**Rule:** If it lives in `NINA.Equipment.Interfaces.Mediator`, inject it freely. If it lives in `NINA.Sequencer`, do not add it to `[ImportingConstructor]` — the plugin will fail with "Object reference not set to an instance of an object" and not load at all.
 
-### Handler signature — must return `Task`
-
-`SequenceFinished` and `SequenceStarting` use an async delegate, **not** `EventHandler`. Handlers must return `Task` or the compiler emits CS0407 "wrong return type":
+### ISwitchMediator API
 
 ```csharp
-private Task OnSequenceStarting(object? sender, EventArgs e) => Task.CompletedTask;
+// Read — call GetInfo() to get current state
+SwitchInfo info = _switchMediator.GetInfo();
+bool connected = info.Connected;
 
-private async Task OnSequenceFinished(object? sender, EventArgs e) {
-    await MyService.StopAsync();
-}
+// Read individual switch by index (Seestar heater is always Id == 0)
+var sw = info.WritableSwitches?.FirstOrDefault(s => s.Id == 0);
+bool heaterOn = sw != null && sw.Value > 0.5;
+
+// Write — first arg is switch Id, second is value (1.0 = on, 0.0 = off)
+await _switchMediator.SetSwitchValue(0, 1.0, null, cancellationToken);
+await _switchMediator.SetSwitchValue(0, 0.0, null, cancellationToken);
 ```
 
-`async void` will compile but swallows exceptions — always use `async Task`.
+`WritableSwitches` can be null if the device isn't connected — always null-check before accessing.
 
-### Unsubscribe in Teardown
+### Stopping background work when NINA closes
+
+Use `Teardown()` for cleanup — this is always called on NINA exit regardless of sequence state:
 
 ```csharp
 public override async Task Teardown() {
-    _sequenceMediator.SequenceStarting -= OnSequenceStarting;
-    _sequenceMediator.SequenceFinished -= OnSequenceFinished;
-    await MyService.StopAsync();   // also stop on NINA close
+    await MyService.StopAsync();
     await base.Teardown();
 }
 ```
 
-Unsubscribing prevents a double-stop if NINA closes while the sequence is still running.
+### Prefer mediators over direct Alpaca HTTP
 
-### Process lifetime summary
+Never open your own `HttpClient` to the Seestar's Alpaca endpoints. Wrap all device access through NINA's mediators — this enforces consistent UX (user must connect the device in NINA first) and avoids "connected" / "not connected" races with NINA's own device management.
 
-| Event | What happens |
-|---|---|
-| Sequence finishes / stopped | `SequenceFinished` fires → `StopAsync()` called |
-| NINA closed | `Teardown()` called → handlers unsubscribed → `StopAsync()` called |
-| Process dies | NINA's process exits, taking all plugin threads with it — no orphan processes |
+---
+
+## Transition-Based Notifications (null-sentinel pattern)
+
+Use a `bool?` field initialised to `null` to cleanly fire Discord/log alerts only on state *transitions*, not every cycle:
+
+```csharp
+private bool? _deviceConnected = null;   // null = not yet observed
+```
+
+Cycle logic:
+
+```csharp
+bool connectedNow = _mediator.GetInfo().Connected;
+
+if (_deviceConnected == null || connectedNow != _deviceConnected.Value) {
+    if (!connectedNow)
+        await NotifyAsync("⚠️ Device not connected in NINA");
+    else if (_deviceConnected == false)          // was disconnected, now reconnected
+        await NotifyAsync("✅ Device reconnected");
+    _deviceConnected = connectedNow;
+}
+
+if (!connectedNow) return;   // skip work until device is available
+```
+
+### Startup initialisation gotcha — avoid duplicate alerts
+
+At startup (`StartAsync`), read the initial device state and **explicitly set `_deviceConnected`** — do not leave it as `null`:
+
+```csharp
+var info = _mediator.GetInfo();
+if (!info.Connected) {
+    _deviceConnected = false;   // MUST set — if left null, the first cycle fires a spurious "not connected" alert
+    Log("Device not connected");
+} else {
+    _deviceConnected = true;
+    Log("Device connected");
+}
+```
+
+If you leave `_deviceConnected = null` after startup and the device is already disconnected, the first cycle sees `null → false` as a transition and fires a Discord notification even though nothing changed — giving the user a duplicate message.
 
 ---
 
@@ -402,3 +462,6 @@ Unsubscribing prevents a double-stop if NINA closes while the sequence is still 
 | NuGet restore fails/hangs | MyGet feed in `NuGet.Config` | Replace with `https://api.nuget.org/v3/index.json` |
 | Plugin not loaded by NINA | DLL in wrong folder | Must be in `3.0.0\<Name>\`, not the NINA version folder |
 | ResourceDictionary resources not found | Missing `[Export(typeof(ResourceDictionary))]` code-behind | Add `Resources.xaml.cs` with the export |
+| Plugin fails to load — "Object reference not set to an instance of an object" in `[ImportingConstructor]` | Injecting a NINA.Sequencer mediator (e.g. `ISequenceMediator`) into the plugin manifest | MEF passes `null` for Sequencer mediators at load time — remove the parameter; use `Teardown()` for cleanup instead |
+| Discord notification fires twice on startup | `_deviceConnected` left as `null` after startup when device is not connected | Explicitly set `_deviceConnected = false` in the not-connected startup branch |
+| Discord message garbled / webhook rejected | Manual string escaping of message content | Use `Newtonsoft.Json.JsonConvert.ToString(message)` for correct JSON escaping |
