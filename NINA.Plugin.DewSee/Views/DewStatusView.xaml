@@ -1,0 +1,95 @@
+<UserControl x:Class="NINA.Plugin.DewSee.Views.DewStatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <StackPanel Margin="8" Background="{StaticResource BackgroundBrush}">
+
+        <!-- Readings -->
+        <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="TEMP" Foreground="{StaticResource PrimaryBrush}" FontSize="10"/>
+                <TextBlock Text="{Binding Temperature, StringFormat={}{0:F1}°C}"
+                           Foreground="{StaticResource PrimaryBrush}" FontSize="16" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="DEW PT" Foreground="{StaticResource PrimaryBrush}" FontSize="10"/>
+                <TextBlock Text="{Binding DewPoint, StringFormat={}{0:F1}°C}"
+                           Foreground="{StaticResource PrimaryBrush}" FontSize="16" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="MARGIN" Foreground="{StaticResource PrimaryBrush}" FontSize="10"/>
+                <TextBlock Text="{Binding Margin, StringFormat={}{0:F1}°C}"
+                           Foreground="{StaticResource PrimaryBrush}" FontSize="16" FontWeight="Bold"/>
+            </StackPanel>
+        </Grid>
+
+        <Separator Margin="0,2,0,6" Background="{StaticResource BorderBrush}"/>
+
+        <!-- Heater status + service status -->
+        <Grid Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="10" Height="10" Margin="0,0,6,0" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="#888"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HeaterOn}" Value="True">
+                                    <Setter Property="Fill" Value="#FF6B35"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <TextBlock VerticalAlignment="Center">
+                    <Run Text="Heater: "/>
+                    <Run Text="{Binding HeaterLabel}" FontWeight="Bold"/>
+                </TextBlock>
+            </StackPanel>
+            <TextBlock Grid.Column="1" Text="{Binding StatusLabel}"
+                       Foreground="{StaticResource PrimaryBrush}" VerticalAlignment="Center" FontSize="11"/>
+        </Grid>
+
+        <!-- Error message -->
+        <TextBlock Text="{Binding LastError}" Foreground="#FF4444" FontSize="11" TextWrapping="Wrap"
+                   Margin="0,0,0,6" Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>
+
+        <!-- Start / Stop buttons -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Content="Start" Command="{Binding StartCommand}" Width="60" Margin="0,0,6,0"/>
+            <Button Content="Stop" Command="{Binding StopCommand}" Width="60" Margin="0,0,6,0"/>
+            <Button Content="Clear Log" Command="{Binding ClearLogCommand}" Width="70"/>
+        </StackPanel>
+
+        <Separator Margin="0,0,0,6" Background="{StaticResource BorderBrush}"/>
+
+        <!-- Log -->
+        <ListBox ItemsSource="{Binding LogEntries}" MaxHeight="160"
+                 Background="Transparent" BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 FontFamily="Consolas" FontSize="11">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="0,1"/>
+                    <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+    </StackPanel>
+</UserControl>
