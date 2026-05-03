@@ -20,6 +20,8 @@ namespace NINA.Plugin.SeeDew.Sequencer {
         public StopDewControlInstruction(SeeDewPlugin plugin) {
             _plugin = plugin;
             Name = "Stop Dew Control";
+            if (System.Windows.Application.Current?.Resources["SeeDew_Icon"] is System.Windows.Media.GeometryGroup icon)
+                Icon = icon;
         }
 
         private StopDewControlInstruction(StopDewControlInstruction cloneMe) : this(cloneMe._plugin) { }
