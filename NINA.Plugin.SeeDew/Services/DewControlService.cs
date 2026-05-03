@@ -35,6 +35,7 @@ namespace NINA.Plugin.SeeDew.Services {
         private CancellationTokenSource? _cts;
         private Task? _pollingTask;
         private bool _heaterOn;
+        private string _logFilePath = "";
 
         private bool? _switchConnected = null;   // null = not yet checked this session
         private bool _weatherAvailable = false;
@@ -59,6 +60,10 @@ namespace NINA.Plugin.SeeDew.Services {
             LastError = null;
             _switchConnected = null;
             _weatherAvailable = false;
+
+            _logFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "NINA", "SeeDew", $"seedew_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
 
             Log("Dew control starting");
 
@@ -211,21 +216,17 @@ namespace NINA.Plugin.SeeDew.Services {
             CycleCompleted?.Invoke(this, new DewStateEventArgs(temp, dew, margin, newHeater, stateChanged));
         }
 
-        private static string LogFilePath => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "NINA", "SeeDew", "seedew.log");
-
         private void Log(string message) {
             var entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}";
             LogEntryAdded?.Invoke(this, entry);
             WriteToLog(entry);
         }
 
-        private static void WriteToLog(string line) {
+        private void WriteToLog(string line) {
+            if (string.IsNullOrEmpty(_logFilePath)) return;
             try {
-                var path = LogFilePath;
-                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-                File.AppendAllText(path, line + Environment.NewLine);
+                Directory.CreateDirectory(Path.GetDirectoryName(_logFilePath)!);
+                File.AppendAllText(_logFilePath, line + Environment.NewLine);
             } catch { }
         }
 

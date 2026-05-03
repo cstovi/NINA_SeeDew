@@ -24,6 +24,9 @@ Features:
 - Integrates with any weather device already connected in NINA
 - Direct Alpaca control of the Seestar heater switch — no extra device setup required
 - Live status panel in the imaging tab showing temperature, dew point, margin, and heater state
-- Optional Discord webhook notifications on heater state changes
-- Auto-starts with NINA; cleanly shuts the heater off when NINA closes")]
+- Optional Discord webhook notifications on heater state changes (log is always written to %LOCALAPPDATA%\NINA\SeeDew\seedew.log)
+- Auto-starts with NINA; cleanly shuts the heater off when NINA closes
+
+Thanks to @Astrowook for ideas, skills and laughs")]
+[assembly: AssemblyMetadata("FeaturedImageURL", "https://i.ibb.co/jkMX7y6m/See-Dew.png")]
 [assembly: AssemblyMetadata("ChangelogURL", "https://github.com/cstovi/SeeDew/releases")]
