@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:/Users/carls/AppData/Local/NINA/Plugins/3.0.0/DewSee\")",
+      "Bash(cp \"C:/Users/carls/Documents/Cursor/NINA_DewSee/NINA.Plugin.DewSee/bin/Debug/net8.0-windows/NINA.Plugin.DewSee.dll\" \"C:/Users/carls/AppData/Local/NINA/Plugins/3.0.0/DewSee/NINA.Plugin.DewSee.dll\")",
+      "Read(//c/Users/carls/AppData/Local/NINA/Plugins/3.0.0/**)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(dotnet build *)",
+      "Bash(powershell.exe *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\carls\\\\.nuget\\\\packages\\\\nina.plugin\\\\3.2.0.9001\" -Recurse | Where-Object { $_.Extension -eq \".dll\" } | Select-Object -First 20)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\carls\\\\.nuget\\\\packages\" -Directory | Where-Object { $_.Name -match \"^nina\\\\.\" } | Select-Object Name)",
+      "PowerShell($items = Get-ChildItem -Path \"C:\\\\Users\\\\carls\\\\.nuget\\\\packages\" ; $items.Count ; $items | Select-Object -First 5)",
+      "PowerShell($items = Get-ChildItem -Path \"C:\\\\Users\\\\carls\\\\.nuget\\\\packages\\\\nina.equipment\\\\3.2.0.9001\" -Recurse; $items.Count; $items | Select-Object -First 20)",
+      "PowerShell(Get-Command *)",
+      "Bash(cd /tmp)",
+      "Bash(python3)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(git add *)"
+    ]
+  }
+}

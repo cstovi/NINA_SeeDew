@@ -5,16 +5,10 @@ using Newtonsoft.Json;
 namespace NINA.Plugin.DewSee {
 
     public class DewSeeSettings {
-        public string AlpacaHost { get; set; } = "localhost";
-        public int AlpacaPort { get; set; } = 5555;
         public double OnBelowThreshold { get; set; } = 3.5;
         public double OffAboveThreshold { get; set; } = 5.0;
         public int PollIntervalMinutes { get; set; } = 1;
         public string DiscordWebhookUrl { get; set; } = "";
-        public bool AutoStart { get; set; } = true;
-        public bool ManageConnection { get; set; } = false;
-
-        public string AlpacaBaseUrl => $"http://{AlpacaHost}:{AlpacaPort}";
 
         private static string SettingsPath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

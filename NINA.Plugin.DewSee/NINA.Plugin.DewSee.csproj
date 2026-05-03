@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>NINA.Plugin.DewSee</RootNamespace>
     <AssemblyName>NINA.Plugin.DewSee</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -11,12 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NINA.Plugin" Version="2.0.2.9001" />
+    <PackageReference Include="NINA.Plugin" Version="3.2.0.9001" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources.xaml" />
   </ItemGroup>
 
 </Project>

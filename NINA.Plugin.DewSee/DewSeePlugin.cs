@@ -1,5 +1,6 @@
-using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using NINA.Core.Utility;
@@ -7,37 +8,35 @@ using NINA.Equipment.Interfaces.Mediator;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Plugin.DewSee.Services;
+using NINA.Equipment.Interfaces;
 
 namespace NINA.Plugin.DewSee {
 
     [Export(typeof(IPluginManifest))]
     [Export]
-    public class DewSeePlugin : PluginBase, IPluginManifest {
+    public class DewSeePlugin : PluginBase, IPluginManifest, INotifyPropertyChanged {
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         private readonly IWeatherDataMediator _weatherMediator;
+        private readonly ISwitchMediator _switchMediator;
 
         public DewControlService DewControlService { get; }
         public DewSeeSettings Settings { get; }
 
         [ImportingConstructor]
-        public DewSeePlugin(IWeatherDataMediator weatherMediator) {
+        public DewSeePlugin(IWeatherDataMediator weatherMediator, ISwitchMediator switchMediator) {
             _weatherMediator = weatherMediator;
+            _switchMediator = switchMediator;
 
             Settings = DewSeeSettings.Load();
-            var alpaca = new SeestarAlpacaClient(() => Settings.AlpacaBaseUrl);
-            DewControlService = new DewControlService(_weatherMediator, alpaca, Settings);
+            DewControlService = new DewControlService(_weatherMediator, _switchMediator, Settings);
 
-            if (Settings.AutoStart)
-                Task.Run(() => DewControlService.StartAsync());
-
-            // Bindable properties for the options UI
-            AlpacaHost = Settings.AlpacaHost;
-            AlpacaPort = Settings.AlpacaPort;
             OnBelowThreshold = Settings.OnBelowThreshold;
             OffAboveThreshold = Settings.OffAboveThreshold;
             PollIntervalMinutes = Settings.PollIntervalMinutes;
             DiscordWebhookUrl = Settings.DiscordWebhookUrl;
-            AutoStart = Settings.AutoStart;
-            ManageConnection = Settings.ManageConnection;
 
             SaveSettingsCommand = new RelayCommand(_ => ApplyAndSave());
         }
@@ -51,30 +50,14 @@ namespace NINA.Plugin.DewSee {
         public ICommand SaveSettingsCommand { get; }
 
         private void ApplyAndSave() {
-            Settings.AlpacaHost = AlpacaHost;
-            Settings.AlpacaPort = AlpacaPort;
             Settings.OnBelowThreshold = OnBelowThreshold;
             Settings.OffAboveThreshold = OffAboveThreshold;
             Settings.PollIntervalMinutes = PollIntervalMinutes;
             Settings.DiscordWebhookUrl = DiscordWebhookUrl;
-            Settings.AutoStart = AutoStart;
-            Settings.ManageConnection = ManageConnection;
             Settings.Save();
         }
 
         // Bindable settings properties for the Options UI
-        private string _alpacaHost = "localhost";
-        public string AlpacaHost {
-            get => _alpacaHost;
-            set { _alpacaHost = value; RaisePropertyChanged(); }
-        }
-
-        private int _alpacaPort = 5555;
-        public int AlpacaPort {
-            get => _alpacaPort;
-            set { _alpacaPort = value; RaisePropertyChanged(); }
-        }
-
         private double _onBelowThreshold = 3.5;
         public double OnBelowThreshold {
             get => _onBelowThreshold;
@@ -99,16 +82,5 @@ namespace NINA.Plugin.DewSee {
             set { _discordWebhookUrl = value; RaisePropertyChanged(); }
         }
 
-        private bool _autoStart = true;
-        public bool AutoStart {
-            get => _autoStart;
-            set { _autoStart = value; RaisePropertyChanged(); }
-        }
-
-        private bool _manageConnection = false;
-        public bool ManageConnection {
-            get => _manageConnection;
-            set { _manageConnection = value; RaisePropertyChanged(); }
-        }
     }
 }

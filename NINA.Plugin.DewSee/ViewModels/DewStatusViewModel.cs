@@ -1,9 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using NINA.Core.Utility;
+using NINA.Equipment.Interfaces.ViewModel;
+using NINA.Profile.Interfaces;
 using NINA.WPF.Base.ViewModel;
 using NINA.Plugin.DewSee.Services;
 
@@ -14,17 +16,13 @@ namespace NINA.Plugin.DewSee.ViewModels {
         private readonly DewControlService _service;
 
         [ImportingConstructor]
-        public DewStatusViewModel(DewSeePlugin plugin) : base(plugin.ProfileService) {
+        public DewStatusViewModel(IProfileService profileService, DewSeePlugin plugin) : base(profileService) {
             _service = plugin.DewControlService;
 
             Title = "Dew Control";
-            // Use a thermometer-like SVG path for the icon
-            ImageGeometry = (GeometryGroup)System.Windows.Application.Current.Resources["ThermometerSVG"];
 
             LogEntries = new ObservableCollection<string>();
 
-            StartCommand = new RelayCommand(async _ => await _service.StartAsync(), _ => !_service.IsRunning);
-            StopCommand = new RelayCommand(async _ => await _service.StopAsync(), _ => _service.IsRunning);
             ClearLogCommand = new RelayCommand(_ => LogEntries.Clear());
 
             _service.CycleCompleted += OnCycleCompleted;
@@ -35,8 +33,6 @@ namespace NINA.Plugin.DewSee.ViewModels {
             ServiceStatus = _service.Status;
         }
 
-        public ICommand StartCommand { get; }
-        public ICommand StopCommand { get; }
         public ICommand ClearLogCommand { get; }
 
         public ObservableCollection<string> LogEntries { get; }
@@ -88,7 +84,7 @@ namespace NINA.Plugin.DewSee.ViewModels {
         public bool HasError => !string.IsNullOrEmpty(_lastError);
 
         private void OnCycleCompleted(object sender, DewStateEventArgs e) {
-            NINA.Core.Utility.CoreUtil.RunOnDispatcher(() => {
+            Application.Current.Dispatcher.Invoke(() => {
                 Temperature = e.Temperature;
                 DewPoint = e.DewPoint;
                 Margin = e.Margin;
@@ -98,7 +94,7 @@ namespace NINA.Plugin.DewSee.ViewModels {
         }
 
         private void OnLogEntry(object sender, string entry) {
-            NINA.Core.Utility.CoreUtil.RunOnDispatcher(() => {
+            Application.Current.Dispatcher.Invoke(() => {
                 LogEntries.Insert(0, entry);
                 while (LogEntries.Count > 100)
                     LogEntries.RemoveAt(LogEntries.Count - 1);
@@ -106,11 +102,9 @@ namespace NINA.Plugin.DewSee.ViewModels {
         }
 
         private void OnStatusChanged(object sender, DewServiceStatus status) {
-            NINA.Core.Utility.CoreUtil.RunOnDispatcher(() => {
+            Application.Current.Dispatcher.Invoke(() => {
                 ServiceStatus = status;
                 LastError = _service.LastError;
-                RaisePropertyChanged(nameof(StartCommand));
-                RaisePropertyChanged(nameof(StopCommand));
             });
         }
     }

@@ -69,10 +69,8 @@
         <TextBlock Text="{Binding LastError}" Foreground="#FF4444" FontSize="11" TextWrapping="Wrap"
                    Margin="0,0,0,6" Visibility="{Binding HasError, Converter={StaticResource BoolToVis}}"/>
 
-        <!-- Start / Stop buttons -->
+        <!-- Clear Log button -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-            <Button Content="Start" Command="{Binding StartCommand}" Width="60" Margin="0,0,6,0"/>
-            <Button Content="Stop" Command="{Binding StopCommand}" Width="60" Margin="0,0,6,0"/>
             <Button Content="Clear Log" Command="{Binding ClearLogCommand}" Width="70"/>
         </StackPanel>
 
