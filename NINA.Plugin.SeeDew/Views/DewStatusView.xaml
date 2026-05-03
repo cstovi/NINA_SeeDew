@@ -58,7 +58,7 @@
                 </Ellipse>
                 <TextBlock VerticalAlignment="Center">
                     <Run Text="Heater: "/>
-                    <Run Text="{Binding HeaterLabel}" FontWeight="Bold"/>
+                    <Run Text="{Binding HeaterLabel, Mode=OneWay}" FontWeight="Bold"/>
                 </TextBlock>
             </StackPanel>
             <TextBlock Grid.Column="1" Text="{Binding StatusLabel}"
