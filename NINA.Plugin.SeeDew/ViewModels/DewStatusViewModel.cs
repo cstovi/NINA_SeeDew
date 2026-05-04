@@ -19,7 +19,7 @@ namespace NINA.Plugin.SeeDew.ViewModels {
         public DewStatusViewModel(IProfileService profileService, SeeDewPlugin plugin) : base(profileService) {
             _service = plugin.DewControlService;
 
-            Title = "Dew Control";
+            Title = "SeeDew";
 
             LogEntries = new ObservableCollection<string>();
 
@@ -104,6 +104,8 @@ namespace NINA.Plugin.SeeDew.ViewModels {
         private void OnStatusChanged(object sender, DewServiceStatus status) {
             Application.Current.Dispatcher.Invoke(() => {
                 ServiceStatus = status;
+                if (status != DewServiceStatus.Running)
+                    HeaterOn = false;
                 LastError = _service.LastError;
             });
         }

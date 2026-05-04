@@ -209,8 +209,6 @@ namespace NINA.Plugin.SeeDew.Services {
                 string emoji  = newHeater ? "🌡️" : "✅";
                 Log($"Heater {action} — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C");
                 await NotifyDiscordAsync($"{emoji} SeeDew: Seestar dew heater {action} — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C");
-            } else {
-                Log($"No change — Temp:{temp:F1}°C  Dew:{dew:F1}°C  Margin:{margin:F1}°C  Heater:{(currentHeater ? "ON" : "OFF")}");
             }
 
             CycleCompleted?.Invoke(this, new DewStateEventArgs(temp, dew, margin, newHeater, stateChanged));
