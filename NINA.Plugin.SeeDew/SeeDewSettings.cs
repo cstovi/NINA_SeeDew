@@ -12,7 +12,7 @@ namespace NINA.Plugin.SeeDew {
 
         private static string SettingsPath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "NINA", "Plugins", "SeeDew", "settings.json");
+            "NINA", "SeeDew", "settings.json");
 
         public static SeeDewSettings Load() {
             try {

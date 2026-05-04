@@ -92,7 +92,7 @@ namespace NINA.Plugin.SeeDew.Services {
             _pollingTask = RunLoopAsync(_cts.Token);
             SetStatus(DewServiceStatus.Running);
 
-            Log($"Running — on<{_settings.OnBelowThreshold:F1}°C, off>{_settings.OffAboveThreshold:F1}°C, every {_settings.PollIntervalMinutes}m");
+            Log($"Running — on < {_settings.OnBelowThreshold:F1}°C, off > {_settings.OffAboveThreshold:F1}°C, every {_settings.PollIntervalMinutes}m");
 
             var lines = new List<string> {
                 $"🔭 SeeDew started — every {_settings.PollIntervalMinutes}m | heater on <{_settings.OnBelowThreshold:F1}°C margin, off >{_settings.OffAboveThreshold:F1}°C margin",
