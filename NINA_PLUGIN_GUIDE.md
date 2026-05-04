@@ -38,7 +38,10 @@ Keep in `Properties/AssemblyInfo.cs`. The GUID is the stable plugin identity —
 [assembly: AssemblyDescription("...")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: Guid("YOUR-GUID-HERE")]              // generate once, never regenerate
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.1001")]
 ```
+
+**`MinimumApplicationVersion` is mandatory.** Without it NINA defaults to `1.11.0.0` and refuses to load the plugin with: _"The plugin is not compatible with this version of N.I.N.A. as it was compiled against 1.11.0.0 but it has to be built against at least 3.0.0.0."_ Use `"3.0.0.1001"` to match the NINA 3.x release baseline.
 
 ---
 
@@ -461,6 +464,7 @@ If you leave `_deviceConnected = null` after startup and the device is already d
 | Plugin options show unexpected toggles | `PluginBase` has default `AutoStart`/`ManageConnection` properties | Remove them from plugin class and any base class binding |
 | NuGet restore fails/hangs | MyGet feed in `NuGet.Config` | Replace with `https://api.nuget.org/v3/index.json` |
 | Plugin not loaded by NINA | DLL in wrong folder | Must be in `3.0.0\<Name>\`, not the NINA version folder |
+| Plugin fails — "compiled against 1.11.0.0 but must be at least 3.0.0.0" | Missing `MinimumApplicationVersion` metadata | Add `[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.1001")]` to `AssemblyInfo.cs` |
 | ResourceDictionary resources not found | Missing `[Export(typeof(ResourceDictionary))]` code-behind | Add `Resources.xaml.cs` with the export |
 | Plugin fails to load — "Object reference not set to an instance of an object" in `[ImportingConstructor]` | Injecting a NINA.Sequencer mediator (e.g. `ISequenceMediator`) into the plugin manifest | MEF passes `null` for Sequencer mediators at load time — remove the parameter; use `Teardown()` for cleanup instead |
 | Discord notification fires twice on startup | `_deviceConnected` left as `null` after startup when device is not connected | Explicitly set `_deviceConnected = false` in the not-connected startup branch |
