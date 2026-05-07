@@ -8,7 +8,7 @@ using NINA.Sequencer.SequenceItem;
 namespace NINA.Plugin.SeeDew.Sequencer {
 
     [Export(typeof(ISequenceItem))]
-    [ExportMetadata("Name", "Stop SeeDew Control")]
+    [ExportMetadata("Name", "SeeDew Stop Dew Control")]
     [ExportMetadata("Description", "Stops the SeeDew automatic dew heater control")]
     [ExportMetadata("Icon", "SeeDew_Icon")]
     [ExportMetadata("Category", "SeeDew")]
