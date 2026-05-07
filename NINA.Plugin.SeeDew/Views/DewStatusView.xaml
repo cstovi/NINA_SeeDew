@@ -89,5 +89,13 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
 
+        <Separator Margin="0,6,0,6" Background="{StaticResource BorderBrush}"/>
+
+        <!-- Usage -->
+        <TextBlock Text="Usage" Foreground="{StaticResource PrimaryBrush}" FontSize="11" FontWeight="Bold" Margin="0,0,0,3"/>
+        <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource PrimaryBrush}" LineHeight="17">
+            Add <Run FontWeight="Bold">SeeDew Start</Run> to your sequence after connecting devices, and <Run FontWeight="Bold">SeeDew Stop</Run> just before disconnecting.
+        </TextBlock>
+
     </StackPanel>
 </UserControl>

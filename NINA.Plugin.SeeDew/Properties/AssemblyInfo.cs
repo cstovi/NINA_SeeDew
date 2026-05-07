@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("SeeDew")]
 [assembly: AssemblyCopyright("Copyright © 2026 Carl Stovell")]
 [assembly: Guid("1B307E89-2157-4DFB-BFCA-A3ED3A58E272")]
-[assembly: AssemblyVersion("1.0.2.0")]
-[assembly: AssemblyFileVersion("1.0.2.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 [assembly: AssemblyMetadata("License", "MIT")]
 [assembly: AssemblyMetadata("LicenseURL", "https://opensource.org/licenses/MIT")]
