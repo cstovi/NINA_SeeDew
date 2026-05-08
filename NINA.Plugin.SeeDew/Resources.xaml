@@ -73,8 +73,6 @@
                 <TextBox Grid.Column="1" Text="{Binding DiscordWebhookUrl, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
             </Grid>
 
-            <Button Content="Save Settings" Command="{Binding SaveSettingsCommand}" HorizontalAlignment="Left" Padding="12,4"/>
-
         </StackPanel>
     </DataTemplate>
 

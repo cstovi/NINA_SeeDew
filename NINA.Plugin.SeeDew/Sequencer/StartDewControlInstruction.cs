@@ -27,6 +27,7 @@ namespace NINA.Plugin.SeeDew.Sequencer {
         private StartDewControlInstruction(StartDewControlInstruction cloneMe) : this(cloneMe._plugin) { }
 
         public override async Task Execute(IProgress<ApplicationStatus> progress, CancellationToken token) {
+            _plugin.RefreshRuntimeSettingsFromDisk();
             await _plugin.DewControlService.StartAsync();
         }
 
