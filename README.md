@@ -9,7 +9,7 @@ It monitors the dew point margin (`temperature - dew point`) and applies hystere
 
 ## Version
 
-Current plugin version: `1.2.0.0`
+Current plugin version: `1.3.0.0`
 
 ## Features
 
