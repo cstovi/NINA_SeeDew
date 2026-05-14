@@ -1,3 +1,7 @@
+.claude/
+
+NuGet.Config
+
 bin/
 obj/
 *.user
