@@ -1,5 +1,7 @@
 # NINA SeeDew Plugin
 
+_NINA 3.x plugin that automates Seestar dew-heater control from connected weather data with hysteresis thresholds._
+
 SeeDew automatically controls the dew heater on a Seestar telescope using weather data already connected in NINA.
 
 It monitors the dew point margin (`temperature - dew point`) and applies hysteresis to avoid rapid toggling:
@@ -9,7 +11,7 @@ It monitors the dew point margin (`temperature - dew point`) and applies hystere
 
 ## Version
 
-Current plugin version: `1.3.1.0`
+Current plugin version: `1.4.0.0`
 
 ## Features
 
@@ -21,6 +23,12 @@ Current plugin version: `1.3.1.0`
   - `SeeDew Stop Dew Control`
 - Optional Discord webhook notifications for start/stop and state changes
 - Session log files written under `%LOCALAPPDATA%\NINA\SeeDew`
+
+### Discord notification example
+
+With webhooks configured, SeeDew can post start/stop details and switch status to a channel:
+
+![Discord message showing SeeDew start summary and Seestar switch heater state](docs/see-dew-discord-notification.png)
 
 ## Requirements
 
@@ -41,7 +49,10 @@ Since SeeDew is not currently in the NINA plugin repository, install it manually
 
 1. Connect your weather source and Seestar switch in NINA.
 2. In plugin options, set thresholds/poll interval — changes are saved automatically.
-3. Add sequence items:
+3. Add sequence items (under **SeeDew** in the Advanced Sequencer):
+
+   ![SeeDew Start Dew Control and SeeDew Stop Dew Control in the sequencer menu](docs/see-dew-sequencer-commands.png)
+
    - `SeeDew Start Dew Control` after device connections
    - `SeeDew Stop Dew Control` before disconnections
 4. Optionally monitor the dockable SeeDew status panel during runs.

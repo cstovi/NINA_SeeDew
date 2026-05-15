@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**SeeDew** automatically controls the dew heater on a Seestar telescope. It reads temperature and dew point from NINA's weather mediator and turns the heater on/off via Alpaca REST to prevent dew forming on the optics.
+**SeeDew** automatically controls the dew heater on a Seestar telescope. It reads temperature and dew point from NINA's weather mediator and turns the heater on/off via NINA's switch mediator to prevent dew forming on the optics.
 
 ## Project Structure
 
@@ -16,7 +16,9 @@ NINA.Plugin.SeeDew/
   SeeDewSettings.cs             ← JSON settings persisted to %LOCALAPPDATA%\NINA\SeeDew\settings.json
   Services/
     DewControlService.cs        ← polling loop, hysteresis logic, events (CycleCompleted, LogEntryAdded, StatusChanged)
-    SeestarAlpacaClient.cs      ← HttpClient wrapper for Alpaca switch endpoints
+  Sequencer/
+    StartDewControlInstruction.cs ← sequencer instruction to start automatic control
+    StopDewControlInstruction.cs  ← sequencer instruction to stop automatic control
   ViewModels/
     DewStatusViewModel.cs       ← [Export(typeof(IDockableVM))]; subscribes to service events; Start/Stop commands
   Views/
@@ -36,10 +38,7 @@ if OFF and margin < OnBelowThreshold  → heater ON
 if ON  and margin > OffAboveThreshold → heater OFF
 ```
 
-**Alpaca endpoints** (base: `http://{host}:{port}/api/v1/switch/0`):
-- `GET /getswitch?Id=0` — read heater state
-- `PUT /setswitch` — body: `Id=0&State=true/false`
-- `PUT /connected` — body: `Connected=true/false`
+**Device access:** heater state is read/written through `ISwitchMediator` (switch `Id=0`), and weather comes from `IWeatherDataMediator`.
 
 ## Settings
 
