@@ -11,7 +11,7 @@ It monitors the dew point margin (`temperature - dew point`) and applies hystere
 
 ## Version
 
-Current plugin version: `1.4.0.0`
+Current plugin version: `1.4.1.0`
 
 ## Features
 
@@ -42,8 +42,10 @@ Since SeeDew is not currently in the NINA plugin repository, install it manually
 
 1. Create this folder if it does not exist:
    - `%LOCALAPPDATA%\NINA\Plugins\3.0.0\SeeDew\`
-2. Drop `NINA.Plugin.SeeDew.dll` into that folder.
+2. Put `NINA.Plugin.SeeDew.dll` in that folder — either unzip it from the **GitHub Release** asset (`NINA.Plugin.SeeDew-*.zip` contains **only** that DLL), or copy it from `NINA.Plugin.SeeDew\bin\Release\net8.0-windows\` after a local Release build.
 3. Restart NINA.
+
+NINA loads plugins **in-process** and already ships the shared dependencies SeeDew uses, so the release zip does **not** mirror a full `dotnet publish` tree (unlike some plugins that ship extra runtimes or hosted UI stacks). See `scripts/Build-ReleaseZip.ps1` for the packaging step used in CI.
 
 ## Usage
 
@@ -69,3 +71,7 @@ Sequencer instructions (`SeeDew Start/Stop Dew Control`) reload this file before
 
 - Plugin identity GUID is stable and must not be changed after publish.
 - Existing dependency warnings (for some transitive packages) may appear at build time, but current Release builds succeed.
+
+## Support
+
+If you use and like anything I've done, support on [Ko-fi](https://ko-fi.com/turnpike47298) is appreciated to encourage me to keep going!

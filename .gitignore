@@ -2,6 +2,8 @@
 
 NuGet.Config
 
+artifacts/
+
 bin/
 obj/
 *.user

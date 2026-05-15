@@ -1,0 +1,36 @@
+# On version tags (v*), build and attach NINA.Plugin.SeeDew-{AssemblyVersion}.zip to the GitHub Release.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Create release zip
+        id: pack
+        shell: pwsh
+        run: |
+          ./scripts/Build-ReleaseZip.ps1
+          $zip = Get-ChildItem -Path artifacts -Filter 'NINA.Plugin.SeeDew-*.zip' | Select-Object -First 1
+          if (-not $zip) { throw 'No zip produced' }
+          "zip=$($zip.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.pack.outputs.zip }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
