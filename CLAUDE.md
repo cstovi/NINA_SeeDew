@@ -1,9 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-@../NINA_shared/NINA_plugin_guide.md
-
 ## Project Overview
 
 **SeeDew** automatically controls the dew heater on a Seestar telescope. It reads temperature and dew point from NINA's weather mediator and turns the heater on/off via NINA's switch mediator to prevent dew forming on the optics.
