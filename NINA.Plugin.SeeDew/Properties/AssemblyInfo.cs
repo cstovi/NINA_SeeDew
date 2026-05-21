@@ -27,6 +27,8 @@ Features:
 - Optional Discord webhook notifications on heater state changes (log is always written to %LOCALAPPDATA%\NINA\SeeDew\seedew.log)
 - Auto-starts with NINA; cleanly shuts the heater off when NINA closes
 
-Thanks to @Astrowook for ideas, skills and laughs")]
+Thanks to @Astrowook for ideas, skills and laughs
+
+If you use and like anything I've done, support on Ko-fi (https://ko-fi.com/turnpike47298) is appreciated to encourage me to keep going!")]
 [assembly: AssemblyMetadata("FeaturedImageURL", "https://i.ibb.co/jkMX7y6m/See-Dew.png")]
 [assembly: AssemblyMetadata("ChangelogURL", "https://github.com/cstovi/NINA_SeeDew/releases")]
