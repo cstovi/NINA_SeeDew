@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using NINA.Core.Utility;
 using NINA.Equipment.Interfaces.Mediator;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
@@ -87,7 +89,9 @@ namespace NINA.Plugin.SeeDew {
                 } finally {
                     _isSyncing = false;
                 }
-            } catch { }
+            } catch (Exception ex) {
+                Logger.Warning($"[SeeDew] RefreshRuntimeSettingsFromDisk failed: {ex.Message}");
+            }
         }
 
         // Bindable settings properties for the Options UI

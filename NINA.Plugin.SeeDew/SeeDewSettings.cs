@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using NINA.Core.Utility;
 
 namespace NINA.Plugin.SeeDew {
 
@@ -18,7 +19,9 @@ namespace NINA.Plugin.SeeDew {
             try {
                 if (File.Exists(SettingsPath))
                     return JsonConvert.DeserializeObject<SeeDewSettings>(File.ReadAllText(SettingsPath)) ?? new SeeDewSettings();
-            } catch { }
+            } catch (Exception ex) {
+                Logger.Warning($"[SeeDew] Settings load failed: {ex.Message}");
+            }
             return new SeeDewSettings();
         }
 
@@ -26,7 +29,9 @@ namespace NINA.Plugin.SeeDew {
             try {
                 Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath)!);
                 File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(this, Formatting.Indented));
-            } catch { }
+            } catch (Exception ex) {
+                Logger.Warning($"[SeeDew] Settings save failed: {ex.Message}");
+            }
         }
     }
 }

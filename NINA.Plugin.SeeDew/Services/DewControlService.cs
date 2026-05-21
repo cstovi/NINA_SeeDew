@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using NINA.Core.Utility;
 using NINA.Equipment.Interfaces.Mediator;
 
 namespace NINA.Plugin.SeeDew.Services {
@@ -225,7 +226,9 @@ namespace NINA.Plugin.SeeDew.Services {
             try {
                 Directory.CreateDirectory(Path.GetDirectoryName(_logFilePath)!);
                 File.AppendAllText(_logFilePath, line + Environment.NewLine);
-            } catch { }
+            } catch (Exception ex) {
+                Logger.Warning($"[SeeDew] Log write failed: {ex.Message}");
+            }
         }
 
         private async Task NotifyDiscordAsync(string message) {
